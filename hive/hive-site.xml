@@ -1,0 +1,71 @@
+<configuration>
+  <!-- MetaStore configuration -->
+  <property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:postgresql://hive-metastore:5432/metastore</value>
+    <description>JDBC URL for the metastore database</description>
+  </property>
+
+  <property>
+    <name>javax.jdo.option.ConnectionDriverName</name>
+    <value>org.postgresql.Driver</value>
+    <description>Driver class name for the metastore database</description>
+  </property>
+
+  <property>
+    <name>javax.jdo.option.ConnectionUserName</name>
+    <value>hive</value>
+    <description>Username for metastore database</description>
+  </property>
+
+  <property>
+    <name>javax.jdo.option.ConnectionPassword</name>
+    <value>hivepassword</value>
+    <description>Password for metastore database</description>
+  </property>
+
+  <!-- Hadoop Configuration -->
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://namenode:9000</value>
+    <description>HDFS NameNode URI</description>
+  </property>
+
+  <!-- Hive Execution Configuration -->
+  <property>
+    <name>hive.metastore.uris</name>
+    <value>thrift://hive-metastore:9083</value>
+    <description>Thrift URI for the Hive metastore</description>
+  </property>
+
+  <property>
+    <name>hive.execution.engine</name>
+    <value>mr</value>
+    <description>Execution engine for Hive (mr = MapReduce, tez, or spark)</description>
+  </property>
+
+  <property>
+    <name>hive.server2.enable.doAs</name>
+    <value>true</value>
+    <description>Run queries as the user submitting the query</description>
+  </property>
+
+  <!-- Temporary Directory -->
+  <property>
+    <name>hive.exec.scratchdir</name>
+    <value>/tmp/hive</value>
+    <description>Temporary directory on HDFS for Hive queries</description>
+  </property>
+
+  <!-- Dynamic Partitioning -->
+  <property>
+    <name>hive.exec.dynamic.partition</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.exec.dynamic.partition.mode</name>
+    <value>nonstrict</value>
+  </property>
+</configuration>
+

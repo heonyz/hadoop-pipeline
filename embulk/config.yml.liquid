@@ -1,0 +1,19 @@
+in:
+  type: mongodb
+  uri: mongodb://mongodb:27017
+  database: twitter
+  collection: tweets
+  query: >
+    {
+      "created_at": {
+        "$gte": "{{from_date}}",
+        "$lt": "{{to_date}}"
+      }
+    }
+
+out:
+  type: file
+  path_prefix: /app/output/tweets_
+  file_ext: .json
+  formatter:
+    type: jsonl

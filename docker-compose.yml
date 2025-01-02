@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  twitter_streaming:
+    build:
+      context: ./twitter_streaming
+    container_name: twitter_streaming
+    working_dir: /app
+    volumes:
+      - ./twitter_streaming:/app
+    env_file:
+      - ./twitter_streaming/.env
+    command: python twitter_streaming.py
+    depends_on:
+      - mongodb
+    restart: always
+    networks:
+      - hadoop  
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - hadoop  
+
+  hadoop-namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    environment:
+      - CLUSTER_NAME=test
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+    volumes:
+      - ./hadoop-config/core-site.xml:/etc/hadoop/core-site.xml
+      - ./hadoop-config/hdfs-site.xml:/etc/hadoop/hdfs-site.xml
+    networks:
+      - hadoop
+
+  hadoop-datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    environment:
+      - CLUSTER_NAME=test
+    volumes:
+      - ./hadoop-config/core-site.xml:/etc/hadoop/core-site.xml
+      - ./hadoop-config/hdfs-site.xml:/etc/hadoop/hdfs-site.xml
+    networks:
+      - hadoop
+
+  hive:
+    image: bde2020/hive:2.3.2-postgresql-metastore
+    container_name: hive
+    environment:
+      - HIVE_METASTORE_HOST=hive-metastore
+      - HIVE_METASTORE_PORT=9083
+    depends_on:
+      - hadoop-namenode
+      - hadoop-datanode
+    volumes:
+      - ./hive/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./hive/hive-site.xml:/opt/hive/conf/hive-site.xml
+      - ./hive/jars/:/opt/hive/lib/
+    networks:
+      - hadoop
+
+networks:
+  hadoop:  
+    driver: bridge
+
+volumes:
+  mongodb_data:
